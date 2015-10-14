@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#if !DNXCORE50
 using System;
 using System.IO;
 using System.Reflection;
@@ -378,7 +379,7 @@ public class NotRazorPrefixType {}";
             var fileReference = new Mock<IMetadataFileReference>();
             fileReference
                 .SetupGet(f => f.Path)
-                .Returns(typeof(string).Assembly.Location);
+                .Returns(typeof(string).GetTypeInfo().Assembly.Location);
             var libraryExport = new LibraryExport(fileReference.Object);
 
             var libraryExporter = new Mock<ILibraryExporter>();
@@ -386,6 +387,24 @@ public class NotRazorPrefixType {}";
                 .Setup(l => l.GetAllExports(It.IsAny<string>()))
                 .Returns(libraryExport);
             return libraryExporter.Object;
+        }
+
+        private static IAssemblyLoadContextAccessor GetLoadContextAccessor()
+        {
+            var loadContext = new Mock<IAssemblyLoadContext>();
+            loadContext
+                .Setup(s => s.LoadStream(It.IsAny<Stream>(), It.IsAny<Stream>()))
+                .Returns((Stream stream, Stream pdb) =>
+                {
+                    var memoryStream = (MemoryStream)stream;
+                    return Assembly.Load(memoryStream.ToArray());
+                });
+
+            var accessor = new Mock<IAssemblyLoadContextAccessor>();
+            accessor
+                .Setup(a => a.GetLoadContext(typeof(RoslynCompilationService).GetTypeInfo().Assembly))
+                .Returns(loadContext.Object);
+            return accessor.Object;
         }
 
         private IApplicationEnvironment GetApplicationEnvironment()
@@ -422,3 +441,4 @@ public class NotRazorPrefixType {}";
         }
     }
 }
+#endif
