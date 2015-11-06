@@ -218,7 +218,7 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
 
         [Theory]
         [InlineData("http://localhost/api/store/actionusingcontrollercorssettings")]
-        [InlineData("http://localhost/api/store/actionwithdifferentcorspolicy")]
+        [InlineData("http://localhost/api/store/actionwithcorssettings")]
         public async Task CorsFilter_RunsBeforeOtherAuthorizationFilters(string url)
         {
             // Arrange
@@ -250,7 +250,7 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
         }
 
         [Fact]
-        public async Task CorsFilter_RunsBeforeOtherAuthorizationFilters_WhenOnAction()
+        public async Task DisableCorsFilter_RunsBeforeOtherAuthorizationFilters()
         {
             // Controller has an authorization filter and Cors filter and the action has a DisableCors filter
             // In this scenario, the CorsFilter should be executed before any other authorization filters

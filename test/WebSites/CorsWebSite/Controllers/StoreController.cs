@@ -18,6 +18,13 @@ namespace CorsWebSite.Controllers
             return new string[] { "product1", "product2" };
         }
 
+        [HttpGet]
+        [EnableCors("Allow example.com")]
+        public string ActionWithCorsSettings()
+        {
+            return "product1";
+        }
+
         // Irrespective of where(controller or action) the Cors filter is applied, Cors filters should be
         // executed before any other type of authorization filters.
         [HttpGet]
