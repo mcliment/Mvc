@@ -136,7 +136,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<MvcMarkerService, MvcMarkerService>();
             services.TryAddSingleton<ITypeActivatorCache, DefaultTypeActivatorCache>();
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.TryAddSingleton<IActionBindingContextAccessor, ActionBindingContextAccessor>();
             services.TryAddSingleton<IUrlHelper, UrlHelper>();
             services.TryAddSingleton<IHttpRequestStreamReaderFactory, MemoryPoolHttpRequestStreamReaderFactory>();
             services.TryAddSingleton<IHttpResponseStreamWriterFactory, MemoryPoolHttpResponseStreamWriterFactory>();

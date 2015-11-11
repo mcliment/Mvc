@@ -1,10 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-namespace Microsoft.AspNet.Mvc.Controllers
+namespace Microsoft.AspNet.Mvc.IntegrationTests
 {
-    public interface IControllerPropertyActivator
+    // Test service for [FromServices] testing
+    public class TestService : ITestService
     {
-        void Activate(ControllerContext context, object controller);
     }
 }

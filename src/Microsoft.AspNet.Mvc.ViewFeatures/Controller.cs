@@ -27,7 +27,7 @@ namespace Microsoft.AspNet.Mvc
     /// </summary>
     public abstract class Controller : IActionFilter, IAsyncActionFilter, IDisposable
     {
-        private ActionContext _actionContext;
+        private ControllerContext _controllerContext;
         private IModelMetadataProvider _metadataProvider;
         private IObjectModelValidator _objectValidator;
         private ITempDataDictionary _tempData;
@@ -107,16 +107,35 @@ namespace Microsoft.AspNet.Mvc
         /// <remarks>
         /// <see cref="Controllers.IControllerActivator"/> activates this property while activating controllers.
         ///  If user code directly instantiates a controller, the getter returns an empty
-        /// <see cref="Mvc.ActionContext"/>.
+        /// <see cref="Mvc.ControllerContext"/>.
         /// </remarks>
-        [ActionContext]
         public ActionContext ActionContext
         {
             get
             {
-                // This should run only for the controller unit test scenarios
-                _actionContext = _actionContext ?? new ActionContext();
-                return _actionContext;
+                return ControllerContext;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Mvc.ControllerContext"/>.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Controllers.IControllerActivator"/> activates this property while activating controllers.
+        ///  If user code directly instantiates a controller, the getter returns an empty
+        /// <see cref="Mvc.ControllerContext"/>.
+        /// </remarks>
+        [ControllerContext]
+        public ControllerContext ControllerContext
+        {
+            get
+            {
+                if (_controllerContext == null)
+                {
+                    _controllerContext = new ControllerContext();
+                }
+
+                return _controllerContext;
             }
             set
             {
@@ -125,15 +144,9 @@ namespace Microsoft.AspNet.Mvc
                     throw new ArgumentNullException(nameof(value));
                 }
 
-                _actionContext = value;
+                _controllerContext = value;
             }
         }
-
-        /// <summary>
-        /// Gets or sets the <see cref="ActionBindingContext"/>.
-        /// </summary>
-        [ActionBindingContext]
-        public ActionBindingContext BindingContext { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="IModelMetadataProvider"/>.
@@ -1396,15 +1409,7 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(prefix));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
-            return TryUpdateModelAsync(model, prefix, BindingContext.ValueProvider);
+            return TryUpdateModelAsync(model, prefix, new CompositeValueProvider(ControllerContext.ValueProviders));
         }
 
         /// <summary>
@@ -1439,25 +1444,17 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(valueProvider));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 prefix,
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
                 valueProvider,
-                BindingContext.InputFormatters,
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider);
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders));
         }
 
         /// <summary>
@@ -1488,25 +1485,17 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(includeExpressions));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 prefix,
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
-                BindingContext.ValueProvider,
-                BindingContext.InputFormatters,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
+                new CompositeValueProvider(ControllerContext.ValueProviders),
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 includeExpressions);
         }
 
@@ -1537,25 +1526,17 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 prefix,
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
-                BindingContext.ValueProvider,
-                BindingContext.InputFormatters,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
+                new CompositeValueProvider(ControllerContext.ValueProviders),
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 predicate);
         }
 
@@ -1594,25 +1575,17 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(includeExpressions));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 prefix,
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
                 valueProvider,
-                BindingContext.InputFormatters,
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 includeExpressions);
         }
 
@@ -1650,25 +1623,17 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 prefix,
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
                 valueProvider,
-                BindingContext.InputFormatters,
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 predicate);
         }
 
@@ -1697,14 +1662,6 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(modelType));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 modelType,
@@ -1712,11 +1669,11 @@ namespace Microsoft.AspNet.Mvc
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
-                BindingContext.ValueProvider,
-                BindingContext.InputFormatters,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
+                new CompositeValueProvider(ControllerContext.ValueProviders),
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider);
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders));
         }
 
         /// <summary>
@@ -1758,14 +1715,6 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             return ModelBindingHelper.TryUpdateModelAsync(
                 model,
                 modelType,
@@ -1773,11 +1722,11 @@ namespace Microsoft.AspNet.Mvc
                 ActionContext.HttpContext,
                 ModelState,
                 MetadataProvider,
-                BindingContext.ModelBinder,
+                new CompositeModelBinder(ControllerContext.ModelBinders),
                 valueProvider,
-                BindingContext.InputFormatters,
+                ControllerContext.InputFormatters,
                 ObjectValidator,
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 predicate);
         }
 
@@ -1815,14 +1764,6 @@ namespace Microsoft.AspNet.Mvc
                 throw new ArgumentNullException(nameof(model));
             }
 
-            if (BindingContext == null)
-            {
-                var message = Resources.FormatPropertyOfTypeCannotBeNull(
-                    nameof(BindingContext),
-                    typeof(Controller).FullName);
-                throw new InvalidOperationException(message);
-            }
-
             var modelExplorer = MetadataProvider.GetModelExplorerForType(model.GetType(), model);
 
             var modelName = prefix ?? string.Empty;
@@ -1835,7 +1776,7 @@ namespace Microsoft.AspNet.Mvc
                 modelName);
 
             ObjectValidator.Validate(
-                BindingContext.ValidatorProvider,
+                new CompositeModelValidatorProvider(ControllerContext.ValidatorProviders),
                 ModelState,
                 validationState: null,
                 prefix: prefix,

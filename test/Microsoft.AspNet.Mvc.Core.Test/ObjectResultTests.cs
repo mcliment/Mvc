@@ -67,7 +67,6 @@ namespace Microsoft.AspNet.Mvc
             var services = new ServiceCollection();
             services.AddInstance(new ObjectResultExecutor(
                 new TestOptionsManager<MvcOptions>(),
-                new ActionBindingContextAccessor(),
                 new TestHttpResponseStreamWriterFactory(),
                 NullLoggerFactory.Instance));
             services.AddInstance<ILoggerFactory>(NullLoggerFactory.Instance);

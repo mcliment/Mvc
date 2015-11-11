@@ -30,11 +30,6 @@ namespace Microsoft.AspNet.Mvc.Filters
         public virtual IList<IInputFormatter> InputFormatters { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of <see cref="IOutputFormatter"/> instances used to format the response.
-        /// </summary>
-        public virtual IList<IOutputFormatter> OutputFormatters { get; set; }
-
-        /// <summary>
         /// Gets or sets the list of <see cref="IModelBinder"/> instances used by model binding.
         /// </summary>
         public virtual IList<IModelBinder> ModelBinders { get; set; }

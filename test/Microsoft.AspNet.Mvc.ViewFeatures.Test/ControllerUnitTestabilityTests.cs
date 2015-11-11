@@ -154,10 +154,9 @@ namespace Microsoft.AspNet.Mvc
             var fileName = "Created.html";
             var mockHttpContext = new Mock<DefaultHttpContext>();
             mockHttpContext.Setup(x => x.Response.RegisterForDispose(It.IsAny<IDisposable>()));
-            var controller = new TestabilityController()
-            {
-                ActionContext = new ActionContext(mockHttpContext.Object, new RouteData(), new ActionDescriptor())
-            };
+
+            var controller = new TestabilityController();
+            controller.ControllerContext.HttpContext = mockHttpContext.Object;
 
             // Act
             var result = controller.FileStream_Action(content, contentType, fileName);
@@ -496,19 +495,19 @@ namespace Microsoft.AspNet.Mvc
         }
 
         [Fact]
-        public void ActionContextDefaultConstructor_CanBeUsedForControllerActionContext()
+        public void ContextDefaultConstructor_CanBeUsedForControllerContext()
         {
             // Arrange
-            var actionContext = new ActionContext();
+            var controllerContext = new ControllerContext();
             var controller = new TestabilityController();
 
             // Act
-            controller.ActionContext = actionContext;
+            controller.ControllerContext = controllerContext;
 
             // Assert
-            Assert.Equal(actionContext.HttpContext, controller.HttpContext);
-            Assert.Equal(actionContext.RouteData, controller.RouteData);
-            Assert.Equal(actionContext.ModelState, controller.ModelState);
+            Assert.Equal(controllerContext.HttpContext, controller.HttpContext);
+            Assert.Equal(controllerContext.RouteData, controller.RouteData);
+            Assert.Equal(controllerContext.ModelState, controller.ModelState);
         }
 
         [Fact]
@@ -529,7 +528,7 @@ namespace Microsoft.AspNet.Mvc
             var controller = new TestabilityController();
 
             // Act
-            controller.ActionContext = actionContext;
+            controller.ControllerContext = new ControllerContext(actionContext);
 
             // Assert
             Assert.Same(httpContext, controller.HttpContext);
@@ -539,23 +538,22 @@ namespace Microsoft.AspNet.Mvc
         }
 
         [Fact]
-        public void ActionContextModelState_ShouldBeSameAsViewDataAndControllerModelState()
+        public void ContextModelState_ShouldBeSameAsViewDataAndControllerModelState()
         {
             // Arrange
-            var actionContext = new ActionContext();
             var controller1 = new TestabilityController();
             var controller2 = new TestabilityController();
 
             // Act
-            controller2.ActionContext = actionContext;
+            controller2.ControllerContext = new ControllerContext();
 
             // Assert
             Assert.Equal(controller1.ModelState, controller1.ActionContext.ModelState);
             Assert.Equal(controller1.ModelState, controller1.ViewData.ModelState);
 
-            Assert.Equal(actionContext.ModelState, controller2.ModelState);
-            Assert.Equal(actionContext.ModelState, controller2.ActionContext.ModelState);
-            Assert.Equal(actionContext.ModelState, controller2.ViewData.ModelState);
+            Assert.Equal(controller1.ControllerContext.ModelState, controller2.ModelState);
+            Assert.Equal(controller1.ControllerContext.ModelState, controller2.ActionContext.ModelState);
+            Assert.Equal(controller1.ControllerContext.ModelState, controller2.ViewData.ModelState);
         }
 
         [Fact]

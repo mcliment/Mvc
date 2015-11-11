@@ -270,7 +270,7 @@ namespace Microsoft.AspNet.Mvc.IntegrationTests
             public string Name { get; set; }
 
             [FromServices]
-            public IActionBindingContextAccessor BindingContext { get; set; }
+            public ITestService TestService { get; set; }
         }
 
         [Fact]
@@ -301,7 +301,7 @@ namespace Microsoft.AspNet.Mvc.IntegrationTests
             var model = Assert.IsType<Order2>(modelBindingResult.Model);
             Assert.NotNull(model.Customer);
             Assert.Equal("bill", model.Customer.Name);
-            Assert.NotNull(model.Customer.BindingContext);
+            Assert.NotNull(model.Customer.TestService);
 
             Assert.Equal(1, modelState.Count);
             Assert.Equal(0, modelState.ErrorCount);
@@ -340,7 +340,7 @@ namespace Microsoft.AspNet.Mvc.IntegrationTests
             var model = Assert.IsType<Order2>(modelBindingResult.Model);
             Assert.NotNull(model.Customer);
             Assert.Equal("bill", model.Customer.Name);
-            Assert.NotNull(model.Customer.BindingContext);
+            Assert.NotNull(model.Customer.TestService);
 
             Assert.Equal(1, modelState.Count);
             Assert.Equal(0, modelState.ErrorCount);
@@ -1491,7 +1491,7 @@ namespace Microsoft.AspNet.Mvc.IntegrationTests
             public Address1 Address { get; set; }
 
             [FromServices]
-            public IActionBindingContextAccessor BindingContext { get; set; }
+            public ITestService TestService { get; set; }
         }
 
         // If a nested POCO object has all properties bound from a greedy source, then it should be populated
@@ -1524,7 +1524,7 @@ namespace Microsoft.AspNet.Mvc.IntegrationTests
 
             var model = Assert.IsType<Order9>(modelBindingResult.Model);
             Assert.NotNull(model.Customer);
-            Assert.NotNull(model.Customer.BindingContext);
+            Assert.NotNull(model.Customer.TestService);
             Assert.NotNull(model.Customer.Address);
             Assert.Equal(AddressStreetContent, model.Customer.Address.Street);
 
