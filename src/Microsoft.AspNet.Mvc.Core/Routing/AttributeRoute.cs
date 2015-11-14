@@ -127,7 +127,7 @@ namespace Microsoft.AspNet.Mvc.Routing
                         routeInfo.ParsedTemplate,
                         new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { AttributeRouting.RouteGroupKey, routeInfo.RouteGroup }
+                            { TreeRouter.RouteGroupKey, routeInfo.RouteGroup }
                         }),
                     Constraints = routeInfo.Constraints
                 });
@@ -203,7 +203,7 @@ namespace Microsoft.AspNet.Mvc.Routing
             ActionDescriptor action)
         {
             var constraint = action.RouteConstraints
-                .Where(c => c.RouteKey == AttributeRouting.RouteGroupKey)
+                .Where(c => c.RouteKey == TreeRouter.RouteGroupKey)
                 .FirstOrDefault();
             if (constraint == null ||
                 constraint.KeyHandling != RouteKeyHandling.RequireKey ||

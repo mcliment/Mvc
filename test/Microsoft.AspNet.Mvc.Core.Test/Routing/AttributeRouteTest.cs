@@ -43,7 +43,7 @@ namespace Microsoft.AspNet.Mvc.Routing
                     },
                     RouteConstraints = new List<RouteDataActionConstraint>()
                     {
-                        new RouteDataActionConstraint(AttributeRouting.RouteGroupKey, "1"),
+                        new RouteDataActionConstraint(TreeRouter.RouteGroupKey, "1"),
                     },
                 },
                 new ActionDescriptor()
@@ -54,7 +54,7 @@ namespace Microsoft.AspNet.Mvc.Routing
                     },
                     RouteConstraints = new List<RouteDataActionConstraint>()
                     {
-                        new RouteDataActionConstraint(AttributeRouting.RouteGroupKey, "2"),
+                        new RouteDataActionConstraint(TreeRouter.RouteGroupKey, "2"),
                     },
                 },
             };
@@ -87,7 +87,7 @@ namespace Microsoft.AspNet.Mvc.Routing
             // Assert 1
             Assert.True(context.IsHandled);
             Assert.Equal("5", context.RouteData.Values["id"]);
-            Assert.Equal("2", context.RouteData.Values[AttributeRouting.RouteGroupKey]);
+            Assert.Equal("2", context.RouteData.Values[TreeRouter.RouteGroupKey]);
 
             handler.Verify(h => h.RouteAsync(It.IsAny<RouteContext>()), Times.Once());
 

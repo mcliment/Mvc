@@ -125,7 +125,7 @@ namespace Microsoft.AspNet.Mvc.Routing
             action.MethodInfo = actionMethod;
             action.RouteConstraints = new List<RouteDataActionConstraint>()
             {
-                new RouteDataActionConstraint(AttributeRouting.RouteGroupKey, "group"),
+                new RouteDataActionConstraint(TreeRouter.RouteGroupKey, "group"),
             };
             action.AttributeRouteInfo = new AttributeRouteInfo();
             action.AttributeRouteInfo.Template = "{controller}/{action}";
@@ -161,7 +161,7 @@ namespace Microsoft.AspNet.Mvc.Routing
                 DisplayName = displayName,
                 RouteConstraints = new List<RouteDataActionConstraint>()
                 {
-                    new RouteDataActionConstraint(AttributeRouting.RouteGroupKey, "whatever"),
+                    new RouteDataActionConstraint(TreeRouter.RouteGroupKey, "whatever"),
                 },
                 AttributeRouteInfo = new AttributeRouteInfo { Template = template },
             };

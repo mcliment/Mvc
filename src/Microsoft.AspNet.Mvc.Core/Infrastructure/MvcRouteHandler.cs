@@ -80,7 +80,7 @@ namespace Microsoft.AspNet.Mvc.Infrastructure
             }
 
             // Removing RouteGroup from RouteValues to simulate the result of conventional routing
-            newRouteData.Values.Remove(AttributeRouting.RouteGroupKey);
+            newRouteData.Values.Remove(TreeRouter.RouteGroupKey);
 
             try
             {
